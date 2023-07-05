@@ -3,8 +3,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/products_bloc.dart';
 
-class ProductScreen extends StatelessWidget {
+class ProductScreen extends StatefulWidget {
   const ProductScreen({super.key});
+
+  @override
+  State<ProductScreen> createState() => _ProductScreenState();
+}
+
+class _ProductScreenState extends State<ProductScreen> {
+  @override
+  void initState() {
+    context.read<ProductsBloc>().add(ProductsLoadedEvent());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +28,14 @@ class ProductScreen extends StatelessWidget {
             if (state is ProductsLoadingState) {
               return CircularProgressIndicator();
             } else if (state is ProductsLoadedState) {
-              return ListView.builder(itemBuilder: (context, index) {
-                return ListTile(
-                    leading: Text(
-                  state.productsModel[index].category.toString(),
-                ));
-              });
+              return ListView.builder(
+                  itemCount: 20,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                        leading: Text(
+                      state.productsModel[index].category.toString(),
+                    ));
+                  });
             } else if (state is ProductsErrorState) {
               return Center(
                 child: Text(state.errorMessage),
